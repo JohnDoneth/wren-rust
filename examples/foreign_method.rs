@@ -1,13 +1,12 @@
-
 #[macro_use]
 extern crate lazy_static;
 
 use std::collections::HashMap;
-use wren::{VM, Configuration, ForeignMethodFn};
+use wren::{Configuration, ForeignMethodFn, VM};
 
 use wren::*;
 
-lazy_static!  {
+lazy_static! {
     static ref FOREIGN_METHODS: HashMap<&'static str, ForeignMethodFn> = {
         let mut map = HashMap::new();
         map.insert("mainMathsin(_)s", wren_foreign_method_fn!(sin));
@@ -26,17 +25,20 @@ fn cos(vm: &mut VM) {
     vm.set_slot_double(0, value.cos());
 }
 
-fn bind_method(_: &mut VM,
-               module: &str,
-               class_name: &str,
-               is_static: bool,
-               signature: &str)
-               -> ForeignMethodFn {
-    let full_signature = format!("{}{}{}{}",
-                                 module,
-                                 class_name,
-                                 signature,
-                                 if is_static { "s" } else { "" });
+fn bind_method(
+    _: &mut VM,
+    module: &str,
+    class_name: &str,
+    is_static: bool,
+    signature: &str,
+) -> ForeignMethodFn {
+    let full_signature = format!(
+        "{}{}{}{}",
+        module,
+        class_name,
+        signature,
+        if is_static { "s" } else { "" }
+    );
     *FOREIGN_METHODS.get::<str>(&full_signature).unwrap_or(&None)
 }
 

@@ -1,4 +1,4 @@
-use crate::{VM, Configuration};
+use crate::{Configuration, VM};
 
 #[test]
 fn list() {
