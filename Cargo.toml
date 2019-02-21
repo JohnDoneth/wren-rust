@@ -9,13 +9,14 @@ license = "MIT"
 homepage = "https://github.com/calviken/wren-rust"
 repository = "https://github.com/calviken/wren-rust"
 documentation = "https://docs.rs/wren"
+edition = "2018"
 
 [dependencies.wren-sys]
-version = "~0.2.3"
+version = "0.2.5"
 path = "./wren-sys"
 
 [dependencies]
 libc = "0.2"
 
 [dev-dependencies]
-lazy_static = "0.2"
+lazy_static = "1.2.0"

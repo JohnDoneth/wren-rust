@@ -1,12 +1,12 @@
-#[macro_use]
-extern crate wren;
-#[macro_use]
-extern crate lazy_static;
+
+use lazy_static::lazy_static;
 
 use std::mem;
 use std::ptr;
 use std::collections::HashMap;
+
 use wren::{Pointer, VM, Configuration, ForeignMethodFn, ForeignClassMethods};
+use wren::*;
 
 pub struct Vec3 {
     pub x: f64,

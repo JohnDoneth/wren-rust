@@ -3,9 +3,7 @@ use std::ptr;
 use std::ffi::{CStr, CString};
 use libc::*;
 use ffi;
-use VM;
-use Pointer;
-use ErrorType;
+use crate::{VM, Pointer, ErrorType};
 
 /// Wrap a `Fn(Pointer, usize) -> Pointer` as an ffi-suitable `ReallocateFn`.
 #[macro_export]
@@ -66,7 +64,7 @@ fn _assert_size<F>() {
 
 #[doc(hidden)]
 #[inline]
-pub fn _wrap_reallocate_fn<F: Fn(Pointer, usize) -> Pointer>(_: F) -> ::ReallocateFn {
+pub fn _wrap_reallocate_fn<F: Fn(Pointer, usize) -> Pointer>(_: F) -> crate::ReallocateFn {
     unsafe extern "C" fn f<F: Fn(Pointer, usize) -> Pointer>(data: *mut c_void,
                                                              new_size: size_t)
                                                              -> *mut c_void {
@@ -78,7 +76,7 @@ pub fn _wrap_reallocate_fn<F: Fn(Pointer, usize) -> Pointer>(_: F) -> ::Realloca
 
 #[doc(hidden)]
 #[inline]
-pub fn _wrap_foreign_method_fn<F: Fn(&mut VM)>(_: F) -> ::ForeignMethodFn {
+pub fn _wrap_foreign_method_fn<F: Fn(&mut VM)>(_: F) -> crate::ForeignMethodFn {
     unsafe extern "C" fn f<F: Fn(&mut VM)>(vm: *mut ffi::WrenVM) {
         mem::transmute::<&(), &F>(&())(&mut VM::from_ptr(vm));
     }
@@ -88,7 +86,7 @@ pub fn _wrap_foreign_method_fn<F: Fn(&mut VM)>(_: F) -> ::ForeignMethodFn {
 
 #[doc(hidden)]
 #[inline]
-pub fn _wrap_finalizer_fn<F: Fn(Pointer)>(_: F) -> ::FinalizerFn {
+pub fn _wrap_finalizer_fn<F: Fn(Pointer)>(_: F) -> crate::FinalizerFn {
     unsafe extern "C" fn f<F: Fn(Pointer)>(data: *mut c_void) {
         mem::transmute::<&(), &F>(&())(data)
     }
@@ -102,7 +100,7 @@ pub fn _wrap_load_module_fn<F: Fn(&mut VM, &str) -> Option<String>,
                             Alloc: Fn(*mut c_void, size_t) -> *mut c_void>
     (_: F,
      _: Alloc)
-     -> ::LoadModuleFn {
+     -> crate::LoadModuleFn {
     unsafe extern "C" fn f<F: Fn(&mut VM, &str) -> Option<String>,
                            Alloc: Fn(*mut c_void, size_t) -> *mut c_void>
         (vm: *mut ffi::WrenVM,
@@ -128,16 +126,16 @@ pub fn _wrap_load_module_fn<F: Fn(&mut VM, &str) -> Option<String>,
 
 #[doc(hidden)]
 #[inline]
-pub fn _wrap_bind_foreign_method_fn<F: Fn(&mut VM, &str, &str, bool, &str) -> ::ForeignMethodFn>
+pub fn _wrap_bind_foreign_method_fn<F: Fn(&mut VM, &str, &str, bool, &str) -> crate::ForeignMethodFn>
     (_: F)
-     -> ::BindForeignMethodFn {
-    unsafe extern "C" fn f<F: Fn(&mut VM, &str, &str, bool, &str) -> ::ForeignMethodFn>
+     -> crate::BindForeignMethodFn {
+    unsafe extern "C" fn f<F: Fn(&mut VM, &str, &str, bool, &str) -> crate::ForeignMethodFn>
         (vm: *mut ffi::WrenVM,
          module: *const c_char,
          class_name: *const c_char,
          is_static: c_int,
          signature: *const c_char)
-         -> ::ForeignMethodFn {
+         -> crate::ForeignMethodFn {
         let mut vm = VM::from_ptr(vm);
         let module = CStr::from_ptr(module).to_str().unwrap();
         let class_name = CStr::from_ptr(class_name).to_str().unwrap();
@@ -151,10 +149,10 @@ pub fn _wrap_bind_foreign_method_fn<F: Fn(&mut VM, &str, &str, bool, &str) -> ::
 
 #[doc(hidden)]
 #[inline]
-pub fn _wrap_bind_foreign_class_fn<F: Fn(&mut VM, &str, &str) -> ::ForeignClassMethods>
+pub fn _wrap_bind_foreign_class_fn<F: Fn(&mut VM, &str, &str) -> crate::ForeignClassMethods>
     (_: F)
-     -> ::BindForeignClassFn {
-    unsafe extern "C" fn f<F: Fn(&mut VM, &str, &str) -> ::ForeignClassMethods>
+     -> crate::BindForeignClassFn {
+    unsafe extern "C" fn f<F: Fn(&mut VM, &str, &str) -> crate::ForeignClassMethods>
         (vm: *mut ffi::WrenVM,
          module: *const c_char,
          class_name: *const c_char)
@@ -170,7 +168,7 @@ pub fn _wrap_bind_foreign_class_fn<F: Fn(&mut VM, &str, &str) -> ::ForeignClassM
 
 #[doc(hidden)]
 #[inline]
-pub fn _wrap_write_fn<F: Fn(&mut VM, &str)>(_: F) -> ::WriteFn {
+pub fn _wrap_write_fn<F: Fn(&mut VM, &str)>(_: F) -> crate::WriteFn {
     unsafe extern "C" fn f<F: Fn(&mut VM, &str)>(vm: *mut ffi::WrenVM, text: *const c_char) {
         mem::transmute::<&(), &F>(&())(&mut VM::from_ptr(vm),
                                        CStr::from_ptr(text).to_str().unwrap());
@@ -181,7 +179,7 @@ pub fn _wrap_write_fn<F: Fn(&mut VM, &str)>(_: F) -> ::WriteFn {
 
 #[doc(hidden)]
 #[inline]
-pub fn _wrap_error_fn<F: Fn(&mut VM, ErrorType, &str, i32, &str)>(_: F) -> ::ErrorFn {
+pub fn _wrap_error_fn<F: Fn(&mut VM, ErrorType, &str, i32, &str)>(_: F) -> crate::ErrorFn {
     unsafe extern "C" fn f<F: Fn(&mut VM, ErrorType, &str, i32, &str)>(vm: *mut ffi::WrenVM,
                                                                        _type: ffi::WrenErrorType,
                                                                        module: *const c_char,

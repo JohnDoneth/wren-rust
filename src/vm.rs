@@ -5,7 +5,7 @@ use std::io;
 use std::rc::Rc;
 use libc::{c_int, c_char};
 use ffi;
-use {ErrorType, Type, Pointer, InterpretResult};
+use crate::{ErrorType, Type, Pointer, InterpretResult};
 
 fn default_write(_: &mut VM, text: &str) {
     print!("{}", text);
@@ -62,27 +62,27 @@ impl Configuration {
         cfg
     }
 
-    pub fn set_reallocate_fn(&mut self, f: ::ReallocateFn) {
+    pub fn set_reallocate_fn(&mut self, f: crate::ReallocateFn) {
         self.0.reallocate_fn = f;
     }
 
-    pub fn set_load_module_fn(&mut self, f: ::LoadModuleFn) {
+    pub fn set_load_module_fn(&mut self, f: crate::LoadModuleFn) {
         self.0.load_module_fn = f;
     }
 
-    pub fn set_bind_foreign_method_fn(&mut self, f: ::BindForeignMethodFn) {
+    pub fn set_bind_foreign_method_fn(&mut self, f: crate::BindForeignMethodFn) {
         self.0.bind_foreign_method_fn = f;
     }
 
-    pub fn set_bind_foreign_class_fn(&mut self, f: ::BindForeignClassFn) {
+    pub fn set_bind_foreign_class_fn(&mut self, f: crate::BindForeignClassFn) {
         self.0.bind_foreign_class_fn = f;
     }
 
-    pub fn set_write_fn(&mut self, f: ::WriteFn) {
+    pub fn set_write_fn(&mut self, f: crate::WriteFn) {
         self.0.write_fn = f;
     }
 
-    pub fn set_error_fn(&mut self, f: ::ErrorFn) {
+    pub fn set_error_fn(&mut self, f: crate::ErrorFn) {
         self.0.error_fn = f;
     }
 
@@ -132,11 +132,11 @@ impl ForeignClassMethods {
                             })
     }
 
-    pub fn set_allocate_fn(&mut self, f: ::ForeignMethodFn) {
+    pub fn set_allocate_fn(&mut self, f: crate::ForeignMethodFn) {
         self.0.allocate = f;
     }
 
-    pub fn set_finalize_fn(&mut self, f: ::FinalizerFn) {
+    pub fn set_finalize_fn(&mut self, f: crate::FinalizerFn) {
         self.0.finalize = f;
     }
 
